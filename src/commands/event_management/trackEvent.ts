@@ -13,7 +13,7 @@ export default new Command({
     run: async ({ client, interaction }) => {
         const events = interaction.guild.scheduledEvents.cache;
 
-        if (!events) {
+        if (events.size < 1) {
             return interaction.reply({ ephemeral: true, content: "No events to track" });
         }
 
@@ -29,7 +29,7 @@ export default new Command({
         });
 
         const row = new MessageActionRow().addComponents(menu);
-        interaction.reply({ ephemeral: true, components: [row] });
+        await interaction.reply({ ephemeral: true, components: [row] });
 
         const msg = (await interaction.fetchReply()) as Message;
         const collector = new InteractionCollector(client, {
@@ -55,6 +55,11 @@ export default new Command({
                     })
                     .then(() => collector.stop);
             }
+        });
+
+        collector.on("end", () => {
+            menu.setDisabled(true);
+            interaction.editReply({ components: [row] });
         });
 
     },
