@@ -6,7 +6,7 @@ export default new Command({
     description: "returns every command",
     run: async ({ client, interaction }) => {
         console.log(client.commands.map((command) => command.name));
-        interaction.followUp({
+        interaction.reply({
             embeds: [
                 new MessageEmbed()
                     .setTitle("Help")
