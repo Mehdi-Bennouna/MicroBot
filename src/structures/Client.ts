@@ -3,6 +3,7 @@ import {
     Client,
     ClientEvents,
     Collection,
+    GuildScheduledEvent,
 } from "discord.js";
 import { CommandType } from "../typings/Command";
 import { glob } from "glob";
@@ -14,6 +15,7 @@ const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
+    trackedEvents: Collection<string, GuildScheduledEvent> = new Collection();
 
     constructor() {
         super({
