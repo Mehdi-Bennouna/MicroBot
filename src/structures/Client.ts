@@ -16,6 +16,7 @@ const globPromise = promisify(glob);
 export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
     trackedEvents: Collection<string, GuildScheduledEvent> = new Collection();
+    activeTrackedEvents: Collection<string, GuildScheduledEvent> = new Collection();
 
     constructor() {
         super({
