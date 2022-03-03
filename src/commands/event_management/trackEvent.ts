@@ -11,7 +11,11 @@ export default new Command({
     name: "track_event",
     description: "select an event to track",
     run: async ({ client, interaction }) => {
-        const events = await interaction.guild.scheduledEvents.fetch();
+        const events = interaction.guild.scheduledEvents.cache;
+
+        if (!events) {
+            return interaction.reply({ ephemeral: true, content: "No events to track" });
+        }
 
         const menu = new MessageSelectMenu()
             .setCustomId("track_event")
@@ -28,21 +32,30 @@ export default new Command({
         interaction.reply({ ephemeral: true, components: [row] });
 
         const msg = (await interaction.fetchReply()) as Message;
-        const collector = new InteractionCollector(client, msg);
+        const collector = new InteractionCollector(client, {
+            message: msg,
+            max: 1,
+            time: 10000,
+        });
 
         collector.on("collect", (collected: SelectMenuInteraction) => {
-            client.trackedEvents.set(
-                collected.values[0],
-                events.filter((event) => event.name === collected.values[0]).first(),
-            );
+            if (collected.values[0]) {
+                client.trackedEvents.set(
+                    collected.values[0],
+                    events.filter((event) => event.name === collected.values[0]).first(),
+                );
 
-            menu.setDisabled(true);
-            interaction.editReply({ components: [row] });
+                menu.setDisabled(true);
+                interaction.editReply({ components: [row] });
 
-            collected.reply({
-                content: `Event "${collected.values[0]}" is now tracked`,
-                ephemeral: true,
-            });
+                collected
+                    .reply({
+                        content: `Event "${collected.values[0]}" is now tracked`,
+                        ephemeral: true,
+                    })
+                    .then(() => collector.stop);
+            }
         });
+
     },
 });
