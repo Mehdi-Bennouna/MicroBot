@@ -16,7 +16,16 @@ export class ExtendedClient extends Client {
     commands: Collection<string, CommandType> = new Collection();
 
     constructor() {
-        super({ intents: 32767 });
+        super({
+            intents: [
+                "GUILD_SCHEDULED_EVENTS",
+                "DIRECT_MESSAGES",
+                "GUILDS",
+                "GUILD_MEMBERS",
+                "GUILD_MESSAGES",
+                "GUILD_MESSAGE_REACTIONS",
+            ],
+        });
     }
 
     start() {
