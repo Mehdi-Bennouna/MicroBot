@@ -62,10 +62,6 @@ export default new Command({
         collector.on("end", () => {
             menu.setDisabled(true);
             interaction.editReply({ components: [row] });
-            console.log(client.trackedEvents);
         });
-
-        
-
     },
 });
