@@ -24,12 +24,12 @@ export default new Command({
         events.forEach((event) => {
             menu.addOptions({
                 label: event.name,
-                value: event.name,
+                value: event.id,
             });
         });
 
         const row = new MessageActionRow().addComponents(menu);
-         interaction.reply({ ephemeral: true, components: [row] });
+        interaction.reply({ ephemeral: true, components: [row] });
 
         const msg = (await interaction.fetchReply()) as Message;
         const collector = new InteractionCollector(client, {
@@ -42,7 +42,7 @@ export default new Command({
             if (collected.values[0]) {
                 client.trackedEvents.set(
                     collected.values[0],
-                    events.filter((event) => event.name === collected.values[0]).first(),
+                    events.filter((event) => event.id === collected.values[0]).first(),
                 );
 
                 menu.setDisabled(true);
@@ -50,7 +50,9 @@ export default new Command({
 
                 collected
                     .reply({
-                        content: `Event "${collected.values[0]}" is now tracked`,
+                        content: `Event "${
+                            client.trackedEvents.get(collected.values[0]).name
+                        }" is now tracked`,
                         ephemeral: true,
                     })
                     .then(() => collector.stop);
@@ -60,7 +62,10 @@ export default new Command({
         collector.on("end", () => {
             menu.setDisabled(true);
             interaction.editReply({ components: [row] });
+            console.log(client.trackedEvents);
         });
+
+        
 
     },
 });

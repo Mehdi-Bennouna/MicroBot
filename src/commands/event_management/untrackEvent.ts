@@ -27,7 +27,7 @@ export default new Command({
         trackedEvents.forEach((event) => {
             menu.addOptions({
                 label: event.name,
-                value: event.name,
+                value: event.id,
             });
         });
 
@@ -44,18 +44,19 @@ export default new Command({
 
         collector.on("collect", (collected: SelectMenuInteraction) => {
             if (collected.values[0]) {
+                collected
+                    .reply({
+                        content: `Event : "${
+                            client.trackedEvents.get(collected.values[0]).name
+                        }" is not tracked anymore`,
+                        ephemeral: true,
+                    })
+                    .then(() => collector.stop);
                 client.trackedEvents.delete(collected.values[0]);
             }
 
             menu.setDisabled(true);
             interaction.editReply({ components: [row] });
-
-            collected
-                .reply({
-                    content: `Event : "${collected.values[0]}" is not tracked anymore`,
-                    ephemeral: true,
-                })
-                .then(() => collector.stop);
         });
 
         collector.on("ent", () => {

@@ -11,7 +11,11 @@ export default new Command({
             });
         }
 
-        const events = Array.from(client.trackedEvents.keys()).join("\n-");
+        const eventNames = client.trackedEvents.map((event) => {
+            return event.name;
+        });
+
+        const events = Array.from(eventNames).join("\n-");
 
         interaction.reply({ content: "-" + events, ephemeral: true });
     },
