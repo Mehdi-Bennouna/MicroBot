@@ -29,7 +29,7 @@ export default new Command({
         });
 
         const row = new MessageActionRow().addComponents(menu);
-        await interaction.reply({ ephemeral: true, components: [row] });
+         interaction.reply({ ephemeral: true, components: [row] });
 
         const msg = (await interaction.fetchReply()) as Message;
         const collector = new InteractionCollector(client, {
