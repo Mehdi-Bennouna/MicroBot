@@ -27,6 +27,7 @@ export class ExtendedClient extends Client {
                 "GUILD_MEMBERS",
                 "GUILD_MESSAGES",
                 "GUILD_MESSAGE_REACTIONS",
+                "GUILD_VOICE_STATES",
             ],
         });
     }
