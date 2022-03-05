@@ -20,7 +20,7 @@ export class ExtendedClient extends Client {
         string,
         {
             event: GuildScheduledEvent;
-            attendees: Collection<string, { totalTime: number; lastTime: number }>;
+            attendees: Collection<string, { totalTime: number; joinTime: number }>;
         }
     > = new Collection();
 
@@ -60,12 +60,11 @@ export class ExtendedClient extends Client {
     async registerModules() {
         const slashCommands: ApplicationCommandDataResolvable[] = [];
         const commandFiles = await globPromise(`${__dirname}/../commands/*/*{.ts,.js}`);
-        console.log(commandFiles);
 
         commandFiles.forEach(async (filePath) => {
             const command: CommandType = await this.importFile(filePath);
             if (!command.name) return;
-            console.log(command);
+            console.log(`<command> ${command.name} loaded`);
             this.commands.set(command.name, command);
             slashCommands.push(command);
         });
