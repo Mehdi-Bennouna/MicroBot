@@ -19,6 +19,7 @@ export default new Event("guildScheduledEventUpdate", (oldEvent, newEvent) => {
     }
 
     if (newEvent.status === "CANCELED") {
+        client.trackedEvents.delete(oldEvent.id);
         //should remove it from the tracked list and do nothin
         console.log("Canceled");
     }
