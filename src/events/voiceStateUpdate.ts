@@ -33,6 +33,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         oldChannelActiveEvent.attendees.set(userId, {
             joinTime: joinTime,
             totalTime: totalTime,
+            username: oldState.member.user.username,
         });
 
         console.log(`total : ${totalTime / 1000}`);
@@ -51,6 +52,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         newChannelActiveEvent.attendees.set(userId, {
             joinTime: joinTime,
             totalTime: totalTime,
+            username: newState.member.user.username,
         });
     }
 });

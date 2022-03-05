@@ -20,7 +20,10 @@ export class ExtendedClient extends Client {
         string,
         {
             event: GuildScheduledEvent;
-            attendees: Collection<string, { totalTime: number; joinTime: number }>;
+            attendees: Collection<
+                string,
+                { totalTime: number; joinTime: number; username: string }
+            >;
         }
     > = new Collection();
 
@@ -34,6 +37,7 @@ export class ExtendedClient extends Client {
                 "GUILD_MESSAGES",
                 "GUILD_MESSAGE_REACTIONS",
                 "GUILD_VOICE_STATES",
+                "GUILD_MEMBERS",
             ],
         });
     }
