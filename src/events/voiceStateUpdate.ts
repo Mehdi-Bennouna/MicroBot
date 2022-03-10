@@ -8,6 +8,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         return;
     }
 
+    //joins or leaves non event channel
     if (!channelEvent(oldState.channelId) && !channelEvent(newState.channelId)) {
         return;
     }
@@ -18,6 +19,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
     let joinTime: number;
     let totalTime: number;
 
+    //leaves an event channel
     if (channelEvent(oldState.channelId)) {
         const oldChannelEvent = channelEvent(oldState.channelId).event;
         const oldChannelActiveEvent = client.activeTrackedEvents.get(oldChannelEvent.id);
@@ -39,6 +41,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         console.log(`total : ${totalTime / 1000}`);
     }
 
+    //joins an event channel
     if (channelEvent(newState.channelId)) {
         const newChannelEvent = channelEvent(newState.channelId).event;
         const newChannelActiveEvent = client.activeTrackedEvents.get(newChannelEvent.id);
