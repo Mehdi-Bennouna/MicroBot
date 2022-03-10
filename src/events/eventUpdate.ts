@@ -26,15 +26,17 @@ export default new Event("guildScheduledEventUpdate", async (oldEvent, newEvent)
 
     if (newEvent.status === "COMPLETED") {
         //hard counts time left
-        const everyone = client.activeTrackedEvents.get(newEvent.id).attendees;
+        const attendenceLog = client.activeTrackedEvents.get(newEvent.id).attendees;
 
         inChannel.forEach((user) => {
-            const temp = everyone.get(user.id);
+            const temp = attendenceLog.get(user.id);
             temp.totalTime += currentTime - temp.joinTime;
-            everyone.set(user.id, temp);
+            attendenceLog.set(user.id, temp);
         });
 
-        console.log(everyone);
+        attendenceLog.forEach((x) =>
+            console.log(`${x.username} : ${x.totalTime / 1000}s`),
+        );
     }
 
     if (newEvent.status === "CANCELED") {
