@@ -2,7 +2,6 @@ import {
     ChatInputApplicationCommandData,
     CommandInteraction,
     CommandInteractionOptionResolver,
-    Guild,
     GuildMember,
     PermissionResolvable,
 } from "discord.js";
@@ -22,5 +21,6 @@ type RunFunction = (options: RunOptions) => any;
 
 export type CommandType = {
     userPermissions?: PermissionResolvable[];
+    userRoles?: string[];
     run: RunFunction;
 } & ChatInputApplicationCommandData;
