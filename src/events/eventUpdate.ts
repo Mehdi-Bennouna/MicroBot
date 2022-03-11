@@ -56,14 +56,14 @@ export default new Event("guildScheduledEventUpdate", async (oldEvent, newEvent)
                 { id: "username", title: "Username" },
                 { id: "totalTime", title: "Time" },
             ],
-            path: "out.csv",
+            path: `event_logs/${newEvent.name}.csv`,
         });
 
         csv.writeRecords(finalData);
 
         (await client.users.fetch("452896496728145921")).send({
             content: "test",
-            files: [`${__dirname}/../../out.csv`],
+            files: [`${__dirname}/../../event_logs/${newEvent.name}.csv`],
         });
     }
 
