@@ -1,6 +1,13 @@
-import { Collection, GuildMember, GuildMemberEditData } from "discord.js";
+import {
+    Collection,
+    GuildMember,
+    GuildMemberEditData,
+    MessageAttachment,
+} from "discord.js";
 import { client } from "..";
 import { Event } from "../structures/Event";
+import { createObjectCsvWriter } from "csv-writer";
+import { OutgoingMessage } from "http";
 
 export default new Event("guildScheduledEventUpdate", async (oldEvent, newEvent) => {
     if (!client.trackedEvents.get(oldEvent.id)) return;
@@ -37,6 +44,27 @@ export default new Event("guildScheduledEventUpdate", async (oldEvent, newEvent)
         attendenceLog.forEach((x) =>
             console.log(`${x.username} : ${x.totalTime / 1000}s`),
         );
+
+        const finalData = attendenceLog.map((x) => {
+            return { username: x.username, totalTime: x.totalTime };
+        });
+
+        client.trackedEvents.delete(newEvent.id);
+
+        const csv = createObjectCsvWriter({
+            header: [
+                { id: "username", title: "Username" },
+                { id: "totalTime", title: "Time" },
+            ],
+            path: "out.csv",
+        });
+
+        csv.writeRecords(finalData);
+
+        (await client.users.fetch("452896496728145921")).send({
+            content: "test",
+            files: [`${__dirname}/../../out.csv`],
+        });
     }
 
     if (newEvent.status === "CANCELED") {
