@@ -10,6 +10,7 @@ import { glob } from "glob";
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
+import { client } from "..";
 
 const globPromise = promisify(glob);
 
@@ -86,5 +87,30 @@ export class ExtendedClient extends Client {
             const event: Event<keyof ClientEvents> = await this.importFile(filePath);
             this.on(event.event, event.run);
         });
+
+        setInterval(() => {
+            console.clear();
+            client.activeTrackedEvents.forEach(async (event) => {
+                const attendeesIds = (await event.event.channel.fetch()).members.map(
+                    (attendee) => {
+                        return attendee.id;
+                    },
+                );
+
+                const eventAttendeesIds = event.attendees.map((attendee, id) => {
+                    return id;
+                });
+
+                if (attendeesIds.length > 0) {
+                    attendeesIds.forEach((attendee) => {
+                        if (eventAttendeesIds.find((x) => x === attendee).length < 1) {
+                            console.log("the tracked people do no match");
+                        }
+                    });
+                }
+
+                console.log(event.attendees);
+            });
+        }, 2000);
     }
 }

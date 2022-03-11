@@ -24,7 +24,9 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         const oldChannelEvent = channelEvent(oldState.channelId).event;
         const oldChannelActiveEvent = client.activeTrackedEvents.get(oldChannelEvent.id);
 
-        console.log("<Voice Update> Left an event channel");
+        console.log(
+            `<Voice Update> ${oldState.member.user.username} Left an event channel`,
+        );
 
         joinTime = oldChannelActiveEvent.attendees.get(userId).joinTime;
 
@@ -38,7 +40,7 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
             username: oldState.member.user.username,
         });
 
-        console.log(`total : ${totalTime / 1000}`);
+        console.log(`   time : ${totalTime / 1000}`);
     }
 
     //joins an event channel
@@ -46,7 +48,9 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         const newChannelEvent = channelEvent(newState.channelId).event;
         const newChannelActiveEvent = client.activeTrackedEvents.get(newChannelEvent.id);
 
-        console.log("<Voice Update> Joined an event channel");
+        console.log(
+            `<Voice Update> ${newState.member.user.username} Joined an event channel`,
+        );
 
         joinTime = currentTime;
 
