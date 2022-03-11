@@ -8,3 +8,5 @@ MOCK_DATA.csv
 package-lock.json
 
 dist/
+
+event_logs/
