@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/BennounaMehdi/MC_Bot#readme",
   "dependencies": {
+    "csv-writer": "^1.6.0",
     "csvtojson": "^2.0.10",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
