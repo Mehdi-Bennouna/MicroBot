@@ -88,9 +88,9 @@ export class ExtendedClient extends Client {
             this.on(event.event, event.run);
         });
 
+        //holy this is ugly
         setInterval(() => {
-            console.clear();
-            client.activeTrackedEvents.forEach(async (event) => {
+            client.activeTrackedEvents.forEach(async (event, eventId) => {
                 const attendeesIds = (await event.event.channel.fetch()).members.map(
                     (attendee) => {
                         return attendee.id;
@@ -102,8 +102,16 @@ export class ExtendedClient extends Client {
                 });
 
                 if (attendeesIds.length > 0) {
-                    attendeesIds.forEach((attendee) => {
+                    attendeesIds.forEach(async (attendee) => {
                         if (eventAttendeesIds.find((x) => x === attendee).length < 1) {
+                            client.activeTrackedEvents
+                                .get(eventId)
+                                .attendees.set(attendee, {
+                                    username: (await client.users.fetch(attendee))
+                                        .username,
+                                    joinTime: new Date().getTime(),
+                                    totalTime: 20000,
+                                });
                             console.log("the tracked people do no match");
                         }
                     });
@@ -111,6 +119,6 @@ export class ExtendedClient extends Client {
 
                 console.log(event.attendees);
             });
-        }, 2000);
+        }, 60000);
     }
 }
