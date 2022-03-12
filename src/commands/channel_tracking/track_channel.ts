@@ -11,7 +11,7 @@ export default new Command({
         //will add "is it training option" and "training name / choices lata"
         {
             name: "channel",
-            description: "select a channel to track",
+            description: "channel to track",
             type: "CHANNEL",
             required: true,
         },
