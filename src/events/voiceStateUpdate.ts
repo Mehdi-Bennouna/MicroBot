@@ -24,16 +24,6 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
         tempMember.channelJoinTime = currentTime;
 
         channel.trackedMembers.set(newState.member.id, tempMember);
-
-        console.table(
-            channel.trackedMembers.map((x) => {
-                return {
-                    username: x.user.username,
-                    join_time: x.channelJoinTime,
-                    total_time: x.channelTime / 1000,
-                };
-            }),
-        );
     }
 
     //leaveing tracked channel
@@ -54,15 +44,5 @@ export default new Event("voiceStateUpdate", async (oldState, newState) => {
             (currentTime - tempMember.channelJoinTime);
 
         channel.trackedMembers.set(newState.member.id, tempMember);
-
-        console.table(
-            channel.trackedMembers.map((x) => {
-                return {
-                    username: x.user.username,
-                    join_time: x.channelJoinTime,
-                    total_time: x.channelTime / 1000,
-                };
-            }),
-        );
     }
 });
