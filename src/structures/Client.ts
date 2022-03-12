@@ -4,19 +4,22 @@ import {
     Client,
     ClientEvents,
     Collection,
+    GuildBasedChannel,
+    GuildChannel,
 } from "discord.js";
 import { CommandType } from "../typings/Command";
 import { glob } from "glob";
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
+import { ExtendedChannel } from "../typings/Channel";
 
 const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client {
     guildId = process.env.guildId;
     commands: Collection<string, CommandType> = new Collection();
-    trackedChannels: Collection<string, Channel> = new Collection();
+    trackedChannels: Collection<string, ExtendedChannel> = new Collection();
 
     constructor() {
         super({
