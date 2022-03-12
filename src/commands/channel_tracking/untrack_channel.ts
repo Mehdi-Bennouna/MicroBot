@@ -34,6 +34,7 @@ export default new Command({
             temp.channelTime += currentTime - temp.channelJoinTime;
         });
 
+        console.log(`${channel.name} Log: -------`);
         console.table(
             channel.trackedMembers.map((x) => {
                 return { username: x.user.username, Time: x.channelTime / 1000 };
