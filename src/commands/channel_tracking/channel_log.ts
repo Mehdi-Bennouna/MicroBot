@@ -27,7 +27,7 @@ export default new Command({
                 };
             }),
         );
-         
+
         interaction.reply({ ephemeral: true, content: "logged" });
     },
 });
