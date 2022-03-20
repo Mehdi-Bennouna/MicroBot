@@ -43,7 +43,7 @@ export default new Command({
 
         const csv = createObjectCsvWriter;
         const csvWriter = csv({
-            path: `${__dirname}/../../../../${channel.name}.csv`,
+            path: `${__dirname}/../../../event_logs/${channel.name}.csv`,
             header: [
                 { id: "username", title: "Username" },
                 { id: "time", title: "Time" },
