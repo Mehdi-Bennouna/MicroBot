@@ -25,7 +25,8 @@
     "csvtojson": "^2.0.10",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
-    "glob": "^7.2.0"
+    "glob": "^7.2.0",
+    "table": "^6.8.0"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

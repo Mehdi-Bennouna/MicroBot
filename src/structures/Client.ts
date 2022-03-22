@@ -1,44 +1,36 @@
 import {
     ApplicationCommandDataResolvable,
+    Channel,
     Client,
     ClientEvents,
     Collection,
-    GuildScheduledEvent,
+    GuildBasedChannel,
+    GuildChannel,
 } from "discord.js";
 import { CommandType } from "../typings/Command";
 import { glob } from "glob";
 import { promisify } from "util";
 import { RegisterCommandsOptions } from "../typings/Client";
 import { Event } from "./Event";
-import { client } from "..";
+import { ExtendedChannel } from "../typings/Channel";
 
 const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client {
+    guildId = process.env.guildId;
     commands: Collection<string, CommandType> = new Collection();
-    trackedEvents: Collection<string, GuildScheduledEvent> = new Collection();
-    activeTrackedEvents: Collection<
-        string,
-        {
-            event: GuildScheduledEvent;
-            attendees: Collection<
-                string,
-                { totalTime: number; joinTime: number; username: string }
-            >;
-        }
-    > = new Collection();
+    trackedChannels: Collection<string, ExtendedChannel> = new Collection();
 
     constructor() {
         super({
             intents: [
-                "GUILD_SCHEDULED_EVENTS",
-                "DIRECT_MESSAGES",
                 "GUILDS",
                 "GUILD_MEMBERS",
                 "GUILD_MESSAGES",
-                "GUILD_MESSAGE_REACTIONS",
+                "DIRECT_MESSAGES",
                 "GUILD_VOICE_STATES",
-                "GUILD_MEMBERS",
+                "GUILD_SCHEDULED_EVENTS",
+                "GUILD_MESSAGE_REACTIONS",
             ],
         });
     }
@@ -57,8 +49,8 @@ export class ExtendedClient extends Client {
             this.guilds.cache.get(guildId)?.commands.set(commands);
             console.log(`Registering commands to ${guildId}`);
         } else {
-            this.application?.commands.set(commands);
             console.log("Registering global commands");
+            this.application?.commands.set(commands);
         }
     }
 
@@ -87,38 +79,5 @@ export class ExtendedClient extends Client {
             const event: Event<keyof ClientEvents> = await this.importFile(filePath);
             this.on(event.event, event.run);
         });
-
-        //holy this is ugly
-        setInterval(() => {
-            client.activeTrackedEvents.forEach(async (event, eventId) => {
-                const attendeesIds = (await event.event.channel.fetch()).members.map(
-                    (attendee) => {
-                        return attendee.id;
-                    },
-                );
-
-                const eventAttendeesIds = event.attendees.map((attendee, id) => {
-                    return id;
-                });
-
-                if (attendeesIds.length > 0) {
-                    attendeesIds.forEach(async (attendee) => {
-                        if (eventAttendeesIds.find((x) => x === attendee).length < 1) {
-                            client.activeTrackedEvents
-                                .get(eventId)
-                                .attendees.set(attendee, {
-                                    username: (await client.users.fetch(attendee))
-                                        .username,
-                                    joinTime: new Date().getTime(),
-                                    totalTime: 20000,
-                                });
-                            console.log("the tracked people do no match");
-                        }
-                    });
-                }
-
-                console.log(event.attendees);
-            });
-        }, 60000);
     }
 }

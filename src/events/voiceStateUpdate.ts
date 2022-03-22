@@ -1,69 +1,48 @@
 import { client } from "..";
 import { Event } from "../structures/Event";
-
+import { isTrackedChannel } from "../utils/functions";
+import { ExtendedMember } from "../typings/Member";
 
 export default new Event("voiceStateUpdate", async (oldState, newState) => {
-    //ignoring non event stuff
+    //ignoring mute unmute stuff
     if (oldState.channelId === newState.channelId) {
         return;
     }
 
-    //joins or leaves non event channel
-    if (!channelEvent(oldState.channelId) && !channelEvent(newState.channelId)) {
-        return;
-    }
-
     const currentTime = new Date().getTime();
-    const userId = oldState.member.id;
 
-    let joinTime: number;
-    let totalTime: number;
-
-    //leaves an event channel
-    if (channelEvent(oldState.channelId)) {
-        const oldChannelEvent = channelEvent(oldState.channelId).event;
-        const oldChannelActiveEvent = client.activeTrackedEvents.get(oldChannelEvent.id);
-
+    //joining tracked channel
+    if (isTrackedChannel(newState.channelId)) {
         console.log(
-            `<Voice Update> ${oldState.member.user.username} Left an event channel`,
+            `<voice-update> ${newState.member.user.username} joined '${newState.channel.name}'`,
         );
+        const channel = client.trackedChannels.get(newState.channelId);
+        const tempMember = newState.member as ExtendedMember;
 
-        joinTime = oldChannelActiveEvent.attendees.get(userId).joinTime;
+        tempMember.channelTime =
+            channel.trackedMembers.get(newState.member.id)?.channelTime | 0;
+        tempMember.channelJoinTime = currentTime;
 
-        totalTime =
-            oldChannelActiveEvent.attendees.get(userId).totalTime +
-            (currentTime - joinTime);
-
-        oldChannelActiveEvent.attendees.set(userId, {
-            joinTime: joinTime,
-            totalTime: totalTime,
-            username: oldState.member.user.username,
-        });
-
-        console.log(`   time : ${totalTime / 1000}`);
+        channel.trackedMembers.set(newState.member.id, tempMember);
     }
 
-    //joins an event channel
-    if (channelEvent(newState.channelId)) {
-        const newChannelEvent = channelEvent(newState.channelId).event;
-        const newChannelActiveEvent = client.activeTrackedEvents.get(newChannelEvent.id);
-
+    //leaveing tracked channel
+    if (isTrackedChannel(oldState.channelId)) {
         console.log(
-            `<Voice Update> ${newState.member.user.username} Joined an event channel`,
+            `<voice-update> ${oldState.member.user.username} left '${oldState.channel.name}'`,
         );
 
-        joinTime = currentTime;
+        const channel = client.trackedChannels.get(oldState.channelId);
+        const tempMember = oldState.member as ExtendedMember;
 
-        totalTime = newChannelActiveEvent.attendees?.get(userId)?.totalTime | 0;
+        tempMember.channelJoinTime = channel.trackedMembers.get(
+            oldState.member.id,
+        ).channelJoinTime;
 
-        newChannelActiveEvent.attendees.set(userId, {
-            joinTime: joinTime,
-            totalTime: totalTime,
-            username: newState.member.user.username,
-        });
+        tempMember.channelTime =
+            channel.trackedMembers.get(oldState.member.id).channelTime +
+            (currentTime - tempMember.channelJoinTime);
+
+        channel.trackedMembers.set(newState.member.id, tempMember);
     }
 });
-
-const channelEvent = (id: string) => {
-    return client.activeTrackedEvents.find((event) => event.event.channelId === id);
-};
