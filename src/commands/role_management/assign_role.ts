@@ -1,8 +1,10 @@
 import { Role } from "discord.js";
+import https from "https";
+import fs from "fs";
 import { Command } from "../../structures/Command";
 
 export default new Command({
-    name: "asign_role",
+    name: "assign_role",
     description: "feed it a file and ll asign a role",
     userPermissions: ["ADMINISTRATOR"],
     options: [
@@ -12,13 +14,24 @@ export default new Command({
             type: "ROLE",
             required: true,
         },
+        {
+            name: "file",
+            description: "link to the file",
+            type: "STRING",
+            required: true,
+        },
     ],
     run: async ({ interaction }) => {
         const guildMembers = await interaction.guild.members.fetch();
-        const memberIds = ["338784722647908354", "624775224637784064"];
+
+        const dataString = (await getData(
+            interaction.options.getString("file"),
+        )) as string;
+
+        const memberTags = dataString.split("\n").slice(0, -1);
 
         guildMembers
-            .filter((member) => memberIds.includes(member.id))
+            .filter((member) => memberTags.includes(member.user.tag))
             .forEach((member) => {
                 member.roles.add(interaction.options.getRole("role") as Role);
             });
@@ -26,3 +39,23 @@ export default new Command({
         interaction.reply({ ephemeral: true, content: "added the roles" });
     },
 });
+
+const getData = (url: string) => {
+    return new Promise((resolve, reject) => {
+        https
+            .get(url, (resp) => {
+                let data = "";
+
+                resp.on("data", (chunk) => {
+                    data += chunk;
+                });
+
+                resp.on("end", () => {
+                    resolve(data);
+                });
+            })
+            .on("error", (err) => {
+                reject(err);
+            });
+    });
+};
