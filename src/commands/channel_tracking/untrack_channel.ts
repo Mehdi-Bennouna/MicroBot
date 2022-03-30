@@ -1,5 +1,5 @@
 import { createObjectCsvWriter } from "csv-writer";
-import { GuildChannel } from "discord.js";
+import { GuildChannel, MessageAttachment } from "discord.js";
 import { client } from "../..";
 import { Command } from "../../structures/Command";
 import { ExtendedChannel } from "../../typings/Channel";
@@ -12,6 +12,12 @@ export default new Command({
             name: "channel",
             description: "channel to untrack",
             type: "CHANNEL",
+            required: true,
+        },
+        {
+            name: "event_name",
+            description: "the name of the training / event",
+            type: "STRING",
             required: true,
         },
     ],
@@ -53,6 +59,11 @@ export default new Command({
         csvWriter.writeRecords(data);
 
         client.trackedChannels.delete(channel.id);
+
+        interaction.user.send({
+            content: `log for ${interaction.options.getString("event_name")}`,
+            files: [`${__dirname}/../../../event_logs/${channel.name}.csv`],
+        });
 
         interaction.reply({
             ephemeral: true,
