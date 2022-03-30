@@ -1,6 +1,5 @@
 import { Role } from "discord.js";
 import https from "https";
-import fs from "fs";
 import { Command } from "../../structures/Command";
 
 export default new Command({
