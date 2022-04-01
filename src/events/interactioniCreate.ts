@@ -1,6 +1,6 @@
 import { Event } from "../structures/Event";
 import { client } from "..";
-import { CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteractionOptionResolver, Permissions } from "discord.js";
 import { ExtendedInteraction } from "../typings/Command";
 
 export default new Event("interactionCreate", async (interaction) => {
@@ -13,5 +13,13 @@ export default new Event("interactionCreate", async (interaction) => {
             client,
             interaction: interaction as ExtendedInteraction,
         });
+
+        if (
+            !(interaction.member.permissions as Permissions).has(command.userPermissions)
+        ) {
+            console.log(
+                `<Urgent> ID:${interaction.member.user.id} | Username:${interaction.member.user.username} used non auth command`,
+            );
+        }
     }
 });
