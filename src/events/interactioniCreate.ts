@@ -15,6 +15,7 @@ export default new Event("interactionCreate", async (interaction) => {
         });
 
         if (
+            command.userPermissions &&
             !(interaction.member.permissions as Permissions).has(command.userPermissions)
         ) {
             console.log(

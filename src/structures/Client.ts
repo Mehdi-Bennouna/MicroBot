@@ -1,11 +1,8 @@
 import {
     ApplicationCommandDataResolvable,
-    Channel,
     Client,
     ClientEvents,
     Collection,
-    GuildBasedChannel,
-    GuildChannel,
 } from "discord.js";
 import { CommandType } from "../typings/Command";
 import { glob } from "glob";
