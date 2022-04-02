@@ -23,19 +23,27 @@ export default new Command({
     run: async ({ interaction }) => {
         const guildMembers = await interaction.guild.members.fetch();
 
-        const dataString = (await getData(
-            interaction.options.getString("file"),
-        )) as string;
+        try {
+            const dataString = (await getData(
+                interaction.options.getString("file"),
+            )) as string;
+            const memberTags = dataString.split("\n").slice(0, -1);
 
-        const memberTags = dataString.split("\n").slice(0, -1);
+            guildMembers
+                .filter((member) => memberTags.includes(member.user.tag))
+                .forEach((member) => {
+                    member.roles.add(interaction.options.getRole("role") as Role);
+                });
 
-        guildMembers
-            .filter((member) => memberTags.includes(member.user.tag))
-            .forEach((member) => {
-                member.roles.add(interaction.options.getRole("role") as Role);
+            interaction.reply({ ephemeral: true, content: "added the roles" });
+        } catch (error) {
+            console.log(error);
+            interaction.reply({
+                ephemeral: true,
+                content: "somethin happened and its not gud",
             });
+        }
 
-        interaction.reply({ ephemeral: true, content: "added the roles" });
     },
 });
 
