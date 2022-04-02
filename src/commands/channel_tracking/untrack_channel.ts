@@ -1,5 +1,5 @@
 import { createObjectCsvWriter } from "csv-writer";
-import { GuildChannel, MessageAttachment } from "discord.js";
+import { GuildChannel } from "discord.js";
 import { client } from "../..";
 import { Command } from "../../structures/Command";
 import { ExtendedChannel } from "../../typings/Channel";
@@ -26,7 +26,6 @@ export default new Command({
             interaction.options.getChannel("channel") as GuildChannel as ExtendedChannel
         ).fetch();
 
-        //if its not a tracked channel
         if (!client.trackedChannels.find((x) => x.id === channel.id)) {
             interaction.reply({ ephemeral: true, content: "Channel not tracked yet" });
             return;
@@ -49,7 +48,9 @@ export default new Command({
 
         const csv = createObjectCsvWriter;
         const csvWriter = csv({
-            path: `${__dirname}/../../../event_logs/${channel.name}.csv`,
+            path: `${__dirname}/../../../logs/voice_channel/${
+                channel.name
+            }-${interaction.options.getString("event_name")}.csv`,
             header: [
                 { id: "username", title: "Username" },
                 { id: "time", title: "Time" },
@@ -62,7 +63,11 @@ export default new Command({
 
         interaction.user.send({
             content: `log for ${interaction.options.getString("event_name")}`,
-            files: [`${__dirname}/../../../event_logs/${channel.name}.csv`],
+            files: [
+                `${__dirname}/../../../logs/voice_channel/${
+                    channel.name
+                }-${interaction.options.getString("event_name")}.csv`,
+            ],
         });
 
         interaction.reply({
