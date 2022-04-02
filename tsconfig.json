@@ -19,7 +19,7 @@
 	},
 	"include": [
 		"src",
-		"enviroment.d.ts"
+		"environment.d.ts"
 	],
 	"exclude": [
 		"node_modules",
